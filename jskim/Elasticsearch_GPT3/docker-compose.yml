@@ -1,0 +1,72 @@
+version: '3.1'
+
+services:
+  crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - mongo
+      - redis
+      - elasticsearch
+    volumes:
+      - ./volume/crawler-logs:/server/logs/
+    environment:
+      - NUM_CONCURRENT=50
+      - LOGGING_LEVEL=30
+
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: elasticsearch
+    environment:
+      - node.name=es01
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
+  #mongo:
+  #  # https://hub.docker.com/_/mongo
+  #  # TODO : Authentication
+  #  image: mongo:4.2.8-bionic
+  #  restart: always
+  #  ports:
+  #    - 27017:27017
+  #  volumes:
+  #    - ./volume/mongo:/data/db
+
+  #redis:
+  #  # https://hub.docker.com/_/redis
+  #  image: redis
+  #  restart: always
+  #  ports:
+  #    - 6379:6379
+
+  #redis-stat:
+  #  # https://hub.docker.com/_/mongo-express
+  #  image: insready/redis-stat
+  #  command: [--server, redis]
+  #  restart: always
+  #  ports:
+  #    - 8080:63790
+  #  links:
+  #    - redis:redis
+
+  #mongo-express:
+  #  # https://hub.docker.com/_/mongo-express
+  #  # TODO : Authentication
+  #  image: mongo-express
+  #  restart: always
+  #  ports:
+  #    - 8081:8081
