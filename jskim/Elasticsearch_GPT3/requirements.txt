@@ -2,6 +2,7 @@ scholarly
 certifi
 fastapi
 requests
+elasticsearch==7.17.0
 uvicorn
 tiktoken
 openai
@@ -11,5 +12,4 @@ pandas
 scipy
 scikit-learn
 pytest
-elasticsearch
-openai
+sentence-transformers
